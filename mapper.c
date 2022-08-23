@@ -5,6 +5,7 @@
 int seqLen(FILE *fasta);
 int mapQuest(char *REF, char *READ, int REFLEN, int RLEN);
 void grapher(char *REF, char *READ, int REFLEN, int RLEN, int pos);
+void subgrapher(char *READ, int RLEN, int pos, int REFLEN);
 
 // this function reads in a reference and a file of reads and maps them and writes to a sam file
 
@@ -45,13 +46,20 @@ int main(int argc, char *argv[])
 //		fscanf(READf, "%s", READr);
 //	}
 
+
+// first read
+	fscanf(READf, ">%i\n", &RID);
+	fscanf(READf, "%s\n", READr);
+	int readLen = strlen(READr);
+	int refPos = mapQuest(REFr, READr, refLen, readLen);
+	grapher(REFr, READr, refLen, readLen, refPos);
+
+// second read
 	fscanf(READf, ">%i\n", &RID);
 	fscanf(READf, "%s", READr);
-	int readLen = strlen(READr);
-
-	int refPos = mapQuest(REFr, READr, refLen, readLen);
-
-	grapher(REFr, READr, refLen, readLen, refPos);
+	readLen = strlen(READr);
+	refPos = mapQuest(REFr, READr, refLen, readLen);
+	subgrapher(READr, readLen, refPos, refLen);
 
 	fclose(READf);
 	free(REFr);
@@ -131,6 +139,25 @@ void grapher(char *REF, char *READ, int REFLEN, int RLEN, int pos)
 		printf("%c", REF[i]);
 	}
 	printf("\n");
+	for (int i = 0; i < (pos - 1); i++)
+	{
+		printf("-");
+	}
+
+	for (int i = 0; i < RLEN; i++)
+	{
+		printf("%c", READ[i]);
+	}
+	for (int i = 0; i < (sup + 1); i++)
+	{
+		printf("-");
+	}
+	printf("\n");
+}
+
+void subgrapher(char *READ, int RLEN, int pos, int REFLEN)
+{
+	int sup = REFLEN - pos - RLEN;
 	for (int i = 0; i < (pos - 1); i++)
 	{
 		printf("-");

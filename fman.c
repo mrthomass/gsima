@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
 
 
 	// vars
-	int const RLENGTH = 15;
-	int const NREAD = 1;
-	int const SEED = 87;
+	int const RLENGTH = 40;
+	int const NREAD = 2;
+	int const SEED = 27;
 	int randint;
 	char reads[NREAD][RLENGTH];
 	// vars
