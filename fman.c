@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// this function reads in a reference and makes reads of it and outputs them to a file
+// this function reads in a reference and makes reads of it and outputs them to a fasta
 
 int main(int argc, char *argv[])
 {
-	if (argc < 3)
+	if (argc < 5)
 	{	
 		printf("Error: reference file argument needed\n");
+		// sample: ./fman SR1.fasta SR1_reads.fasta #READS #SEED
 		return(1);
 	}
 
@@ -21,9 +22,11 @@ int main(int argc, char *argv[])
 
 
 	// vars
-	int const RLENGTH = 40;
-	int const NREAD = 2;
-	int const SEED = 27;
+	int const RLENGTH = 25;
+	int NREAD;
+	int SEED;
+	sscanf(argv[3], "%i", &NREAD);
+	sscanf(argv[4], "%i", &SEED);
 	int randint;
 	char reads[NREAD][RLENGTH];
 	// vars

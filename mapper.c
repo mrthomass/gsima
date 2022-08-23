@@ -4,7 +4,6 @@
 
 int seqLen(FILE *fasta);
 int mapQuest(char *REF, char *READ, int REFLEN, int RLEN);
-void grapher(char *REF, char *READ, int REFLEN, int RLEN, int pos);
 void subgrapher(char *READ, int RLEN, int pos, int REFLEN);
 
 // this function reads in a reference and a file of reads and maps them and writes to a sam file
@@ -47,19 +46,26 @@ int main(int argc, char *argv[])
 //	}
 
 
-// first read
-	fscanf(READf, ">%i\n", &RID);
-	fscanf(READf, "%s\n", READr);
-	int readLen = strlen(READr);
-	int refPos = mapQuest(REFr, READr, refLen, readLen);
-	grapher(REFr, READr, refLen, readLen, refPos);
 
-// second read
-	fscanf(READf, ">%i\n", &RID);
-	fscanf(READf, "%s", READr);
-	readLen = strlen(READr);
-	refPos = mapQuest(REFr, READr, refLen, readLen);
-	subgrapher(READr, readLen, refPos, refLen);
+// THIS WILL ALL NEED TO BE MADE INTO LOOP ----------------------------------------------------------
+	
+	printf("%s\n", REFr);
+	int readLen;
+	int refPos;
+
+	while (!feof(READf))
+	{
+		fscanf(READf, ">%i\n", &RID);
+		fscanf(READf, "%s\n", READr);
+		readLen = strlen(READr);
+		refPos = mapQuest(REFr, READr, refLen, readLen);
+		subgrapher(READr, readLen, refPos, refLen);
+	}
+
+
+// THIS WILL ALL NEED TO BE MADE INTO LOOP ----------------------------------------------------------
+
+	printf("\n");
 
 	fclose(READf);
 	free(REFr);
@@ -129,32 +135,6 @@ int mapQuest(char *REF, char *READ, int REFLEN, int RLEN)
 	return(loci - RLEN + 2);
 }
 
-
-void grapher(char *REF, char *READ, int REFLEN, int RLEN, int pos)
-{
-	int sup = REFLEN - pos - RLEN;
-	printf("\n");
-	for (int i = 0; i < REFLEN; i++)
-	{
-		printf("%c", REF[i]);
-	}
-	printf("\n");
-	for (int i = 0; i < (pos - 1); i++)
-	{
-		printf("-");
-	}
-
-	for (int i = 0; i < RLEN; i++)
-	{
-		printf("%c", READ[i]);
-	}
-	for (int i = 0; i < (sup + 1); i++)
-	{
-		printf("-");
-	}
-	printf("\n");
-}
-
 void subgrapher(char *READ, int RLEN, int pos, int REFLEN)
 {
 	int sup = REFLEN - pos - RLEN;
@@ -171,5 +151,5 @@ void subgrapher(char *READ, int RLEN, int pos, int REFLEN)
 	{
 		printf("-");
 	}
-	printf("\n\n");
+	printf("\n");
 }
