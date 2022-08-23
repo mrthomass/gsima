@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// this function reads in a reference and prints it out along with the # of bp
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{	
-		printf("Error: file argument needed\n");
+		printf("Error: reference file argument needed\n");
 		return(1);
 	}
 

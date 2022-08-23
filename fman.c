@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// this function reads in a reference and makes reads of it and outputs them to a file
+
 int main(int argc, char *argv[])
 {
-	if (argc < 2)
+	if (argc < 3)
 	{	
-		printf("Error: file argument needed\n");
+		printf("Error: reference file argument needed\n");
 		return(1);
 	}
 
@@ -19,9 +21,9 @@ int main(int argc, char *argv[])
 
 
 	// vars
-	int const RLENGTH = 5;
-	int const NREAD = 10;
-	int const SEED = 8;
+	int const RLENGTH = 15;
+	int const NREAD = 1;
+	int const SEED = 87;
 	int randint;
 	char reads[NREAD][RLENGTH];
 	// vars
@@ -42,6 +44,9 @@ int main(int argc, char *argv[])
 	fscanf(fasta, "%s", ref);
 	fclose(fasta);
 
+	// now to writing a reads file
+
+	FILE *fasto = fopen(argv[2], "w");
 
 	srand(SEED);
 	int pzone = (reflen - RLENGTH + 1);
@@ -49,29 +54,14 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < NREAD; i++)
 	{
 		randint = rand() % pzone;
+		fprintf(fasto, ">read_%i\n", i + 1); // print to output
 		for (int j = 0; j < RLENGTH; j++)
 		{
-			reads[i][j] = *(ref + randint + j);
+			fprintf(fasto, "%c", *(ref + randint + j));
 		}
+		fprintf(fasto, "\n");
 	}
 
-
-	// remove this later this is for printing the reads
-
-	printf("REFERENCE:\t%s\n", ref);
-	
-	for (int i = 0; i < NREAD; i++)
-	{
-		randint = rand() % pzone;
-		printf("READ (%i):\t", i + 1);
-		for (int j = 0; j < RLENGTH; j++)
-		{
-			printf("%c", reads[i][j]);
-		}
-		printf("\n");
-	}
-
-	// remove
-	
+	fclose(fasto);
 	free(ref);
 }
