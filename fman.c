@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < NREAD; i++)
 	{
 		randint = rand() % pzone;
-		fprintf(fasto, ">read_%i\n", i + 1); // print to output
+		fprintf(fasto, ">%i\n", i + 1); // print to output
 		for (int j = 0; j < RLENGTH; j++)
 		{
 			fprintf(fasto, "%c", *(ref + randint + j));

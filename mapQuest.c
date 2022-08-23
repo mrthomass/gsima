@@ -1,12 +1,15 @@
 #include <stdio.h>
+#include <string.h>
 
 int main(void)
 {
-	int const RLEN = 5;
-	int const REFLEN = 100;
 
-	char *const READ = "ACGAA";
-	char *const REF = "CTAGTATCACGAGCAGCTGGGGGCCAGGCAGGTATTGACGAACCTCCCATTGAGTAGTCTCAACTCGCCCACTGACTTTTTGTGTGAGCGAGTATTCACC";
+
+	char *const READ = "ACGGGGTCTTGGGGG";
+	char *const REF = "TTTCTTACGTTTTTTTTTTT";
+
+	int const RLEN = strlen(READ);
+	int const REFLEN = strlen(REF);
 
 	int rmap[RLEN][REFLEN];
 	short score[REFLEN + (RLEN - 1)];
@@ -39,11 +42,19 @@ int main(void)
 		}
 	}
 
-	for (int i = 0; i < (REFLEN + (RLEN - 1)); i++)
+	int loci = 0;
+	int val = score[0];
+
+	for (int i = 1; i < (REFLEN + (RLEN - 1)); i++)
 	{
-		printf("%i|", score[i]);
+		if (score[i] > val)
+		{
+			val = score[i];
+			loci = i;
+		}
 	}
-	printf("\n");
+
+	printf("%i \n", loci - RLEN + 2);
 }
 
 
