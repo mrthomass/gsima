@@ -6,7 +6,7 @@
 
 int main(void)
 {
-	char *hodle = "ACCTCG";
+	char *hodle = "ACCTCG"; // got tribute here
 	char *hodle2 = malloc(strlen(hodle) + 1);
 	
 	for (int i = 0; i < strlen(hodle); i++)

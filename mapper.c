@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 	if (argc < 3)
 	{
 		printf("ERROR: File arguments required\n");
+		printf("eg. ./mapper SR1.fasta SR1_reads.fasta\n");
 		return(1);
 	}
 	
@@ -37,26 +38,28 @@ int main(int argc, char *argv[])
 	}
 
 	int RID;
-	char *READr = malloc(15 + 1); // this is not scalable
-
-//	while (!feof(READf)) // this will be for when we go scalable
-//	{
-//		fscanf(READf, ">%i\n", &RID);
-//		fscanf(READf, "%s", READr);
-//	}
+	char *READr = malloc(25 + 1); // this is not scalable **PROBLEM PROBLEM**
 
 
 
 // THIS WILL ALL NEED TO BE MADE INTO LOOP ----------------------------------------------------------
 	
-	printf("%s\n", REFr);
+	printf("\n%s\n", REFr);
 	int readLen;
 	int refPos;
+
+	int posOne;
+	int posTwo;
 
 	while (!feof(READf))
 	{
 		fscanf(READf, ">%i\n", &RID);
+		posOne = ftell(READf); // get the start pos here
+		fscanf(fasta, "%*[^\n]\n"); // go to the end of the line
+		
+		fscanf(READf, "
 		fscanf(READf, "%s\n", READr);
+		
 		readLen = strlen(READr);
 		refPos = mapQuest(REFr, READr, refLen, readLen);
 		subgrapher(READr, readLen, refPos, refLen);
@@ -66,7 +69,6 @@ int main(int argc, char *argv[])
 // THIS WILL ALL NEED TO BE MADE INTO LOOP ----------------------------------------------------------
 
 	printf("\n");
-
 	fclose(READf);
 	free(REFr);
 	free(READr);

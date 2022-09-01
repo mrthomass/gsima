@@ -1,0 +1,10 @@
+echo
+echo 200bp reference
+echo 40 reads of 20-30bp
+
+
+./refsim 200 435 SR1.fasta
+
+./fman SR1.fasta SR1_reads.fasta 40 435 25
+
+./mapper SR1.fasta SR1_reads.fasta
