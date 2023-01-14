@@ -4,36 +4,35 @@
 
 int * mapQuest(char *REF, char *READ, int REFLEN, int RLEN);
 char *combineRead(char *readOne, char *readTwo, int loc);
+int *sumFast(FILE *fasta);
 
 
 // right now it works well with clean data we can work later for less clean
 
 int main(int argc, char *argv[])
 {
+	FILE *readFile = fopen("SR1_reads.fasta", "r");
+	if (readFile == NULL)
+	{
+		printf("Error: READ FILE\n");
+		return(1);
+	}
 
-	// master ATGCAG
+	int *charles = sumFast(readFile);
 
-	char *ref = "TG";
-	char *read = "AT";
-	char *read2 = "GCAG";
+	printf("NUM READS: %i\n", charles[0]);
 	
-	int *location = mapQuest(ref, read, strlen(ref), strlen(read));
+	for (int i = 1; i < charles[0] + 1; i++)
+	{
+		printf("R#: %i\t%i\n", i, charles[i]);
+	}
 	
-	char *newRef = combineRead(ref, read, location[1]);
-	
-	// printf("ATGCTACTTGGAGGGCCCATTGAGGTTAAGGGTCCATTCATGATGGATAGAGGAT\n");
-
-	int *location2 = mapQuest(newRef, read2, strlen(newRef), strlen(read2));
-
-	char *extraNewRef = combineRead(newRef, read2, location2[1]);
-	
-	printf("%s\n", extraNewRef);
-
-	free(newRef);
-	free(extraNewRef);
+	fclose(readFile);
+	free(charles);
 
 }
 
+// this function maps the read onto the ref to the best of its abbility and returns the likely position and confidence
 int * mapQuest(char *REF, char *READ, int REFLEN, int RLEN)
 {
 
@@ -139,3 +138,53 @@ char *combineRead(char *readOne, char *readTwo, int loc)
 	
 	return(comb);
 }
+
+
+// this function summarizes the fasta file of reads and outputs an array, at [0] it's the number of reads in the file
+int *sumFast(FILE *fasta)
+{
+	char chVal;
+	int nRead = 0;
+
+	// step One get the number of reads based on '>'s' (62's)
+
+	while ((chVal = fgetc(fasta)) != EOF)
+	{
+		if (chVal == 62)
+		{
+			nRead++;
+		}
+	}
+
+	rewind(fasta);
+
+	// step Two get the length of each of the nRead's
+
+	int *oparray = malloc(sizeof(int) * (nRead + 1));
+
+	oparray[0] = nRead;
+
+	fscanf(fasta, "%*[^\n]\n");
+
+	int a = ftell(fasta);
+	int b;
+
+	for (int i = 1; i < nRead + 1; i++)
+	{
+		fscanf(fasta, "%*[^\n]\n");
+		b = ftell(fasta);
+		if (i != nRead)
+		{
+			fscanf(fasta, "%*[^\n]\n");
+		}
+		oparray[i] = b - a - 1; // this is the cutting >>
+		a = ftell(fasta);
+	}
+
+	oparray[nRead]++; // add one len to the final due to cuting
+
+	return(oparray);
+}
+
+
+
