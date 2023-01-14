@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+
+// as of sep 30, 2022 we no longer need a seed. This is still in the arguments though.
 
 char *insertSNP(char *ref, int refLen, int SNPSEED);
 
@@ -9,8 +12,8 @@ int main(int argc, char *argv[])
 {
 	if (argc < 6)
 	{	
-		printf("Error: reference file argument needed\neg: ./fman SR1.fasta SR1_reads.fasta #READS #SEED #RLength\n");
-		// sample: ./fman SR1.fasta SR1_reads.fasta #READS #SEED #RLENGTH
+		printf("Error: reference file argument needed\neg: ./fman SR1.fasta SR1_reads.fasta #READS #SEED #RLength #maxdif\n");
+		// sample: ./fman SR1.fasta SR1_reads.fasta #READS #SEED #RLENGTH #MAXDIF
 		return(1);
 	}
 
@@ -27,9 +30,11 @@ int main(int argc, char *argv[])
 	int RLENGTH;
 	int NREAD;
 	int SEED;
+	int difFac;
 	sscanf(argv[3], "%i", &NREAD);
 	sscanf(argv[4], "%i", &SEED);
 	sscanf(argv[5], "%i", &RLENGTH);
+	sscanf(argv[6], "%i", &difFac);
 	int randone;
 	int randint;
 	char reads[NREAD][RLENGTH];
@@ -51,18 +56,20 @@ int main(int argc, char *argv[])
 	char *thisref = insertSNP(ref, reflen, 47); // I am not sure how safe this function is
 
 
-//	printf("OLD: %s\nNEW: %s\n", ref, thisref);
+	// YOU'LL need to remove this thomas
+	printf("LOC: %i\n", 47);
+	printf("OLD: %s\nNEW: %s\n", ref, thisref);
 
 
 	// now to writing a reads file
 
 	FILE *fasto = fopen(argv[2], "w");
-	srand(SEED);
+	srand(time(NULL));
 	int pzone;
 
 	for (int i = 0; i < NREAD; i++)
 	{
-		randone = rand() % 10;
+		randone = rand() % (difFac + 1);
 		pzone = (reflen - (RLENGTH + randone) + 1);
 		randint = rand() % pzone;
 		fprintf(fasto, ">%i\n", i + 1); // print to output
@@ -82,8 +89,9 @@ int main(int argc, char *argv[])
 // this function will take a reference sequence and change a nucleotide for the reads, this is analogous to having a different person
 char *insertSNP(char *ref, int refLen, int SNPSEED)
 {
-	srand(SNPSEED);
+	srand(time(NULL));
 	int pos = rand() % refLen;
+	printf("\n\nREMOVE REMOVE REMOVE: %i\n\n", pos); // REMOVE REMOVE REMOVE
 	char *thisRef = malloc(refLen + 1);
 
 	for (int i = 0; i < refLen; i++)

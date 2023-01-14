@@ -3,10 +3,21 @@
 
 int main(void)
 {
+	// SUM: This is where the read alignment happens
+
+	// Maps the READ to the REF, prints location where it gets the most 'points'
+	// Denovo will use this algorithm, but needs to return multiple possible locations
 
 
-	char *const READ = "ACGGGGTCTTGGGGG";
-	char *const REF = "TTTCTTACGTTTTTTTTTTT";
+	// having the top 10 or something would be easier,...
+
+
+
+	char *const READ = "CGTATTGAGCCT";
+	char *const REF = "TTGAGCCTTCGGGAGAACC";
+	
+	int const scoreThresh = 2;
+	
 
 	int const RLEN = strlen(READ);
 	int const REFLEN = strlen(REF);
@@ -47,10 +58,17 @@ int main(void)
 
 	for (int i = 1; i < (REFLEN + (RLEN - 1)); i++)
 	{
+		// finds the top score
 		if (score[i] > val)
 		{
 			val = score[i];
 			loci = i;
+		}
+
+		// finds the scores over the score threashold
+		if (score[i] > scoreThresh)
+		{
+			printf("%i\n", score[i]); // REMOVE REMOVE REMOVE REMOVE <>
 		}
 	}
 

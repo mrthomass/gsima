@@ -7,6 +7,7 @@ int main(int argc, char *argv[]) // void
 {
 	if (argc != 4)
 	{
+		// input is:: call seqLen randSeed opFile
 		printf("ERROR: check inputs\neg. ./refsim 10 4 ~/Genomics/GSIM/SR1.fasta\n");
 		return(1);
 	}
