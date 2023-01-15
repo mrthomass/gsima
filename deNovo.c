@@ -5,34 +5,52 @@
 int * mapQuest(char *REF, char *READ, int REFLEN, int RLEN);
 char *combineRead(char *readOne, char *readTwo, int loc);
 int *sumFast(FILE *fasta);
+char *alignWith(char *found, char *read);
 
 
 // right now it works well with clean data we can work later for less clean
 
 int main(int argc, char *argv[])
 {
-	FILE *readFile = fopen("SR1_reads.fasta", "r");
+	FILE *readFile = fopen("SR2_reads.fasta", "r");
 	if (readFile == NULL)
 	{
 		printf("Error: READ FILE\n");
 		return(1);
 	}
 
+	// actual GCAATCATCCCTCCTGCTCTAGCTGAGGGTATGGGTCTAGGGGTCTATCTTCAATATTGAAAACGGGCCGCGCGGCGTCCAGACGTATCTGACAGGAGTT
+
+
 	int *charles = sumFast(readFile);
 
-	printf("NUM READS: %i\n", charles[0]);
+	// first work with the three reads
+
+	char *masterbuild = malloc(sizeof(char) * (charles[1] + 1));
+	char *holderman;
+
+	// would need a sub for loop to deal with skipping certain reads that have already been aligned
 	
-	for (int i = 1; i < charles[0] + 1; i++)
+	fscanf(readFile, "%*[^\n]\n%s\n", masterbuild);
+
+	for (int i = 2; i < charles[0] + 1; i++)
 	{
-		printf("R#: %i\t%i\n", i, charles[i]);
+		holderman = malloc(sizeof(char) * (charles[i] + 1));	
+		fscanf(readFile, "%*[^\n]\n%s\n", holderman);
+		masterbuild = alignWith(masterbuild, holderman);
 	}
+
+	printf("%s\n", masterbuild);
 	
 	fclose(readFile);
 	free(charles);
+	free(holderman);
+	free(masterbuild);
 
 }
 
 // this function maps the read onto the ref to the best of its abbility and returns the likely position and confidence
+// 0 confidence, 1 position
 int * mapQuest(char *REF, char *READ, int REFLEN, int RLEN)
 {
 
@@ -140,6 +158,17 @@ char *combineRead(char *readOne, char *readTwo, int loc)
 }
 
 
+// need a function that returns just the read, combines the previous two functions
+
+char *alignWith(char *found, char *read)
+{
+	int *h = mapQuest(found, read, strlen(found), strlen(read));
+	char *opt = combineRead(found, read, h[1]);
+	return(opt);
+}
+
+
+
 // this function summarizes the fasta file of reads and outputs an array, at [0] it's the number of reads in the file
 int *sumFast(FILE *fasta)
 {
@@ -183,6 +212,7 @@ int *sumFast(FILE *fasta)
 
 	oparray[nRead]++; // add one len to the final due to cuting
 
+	rewind(fasta);
 	return(oparray);
 }
 
