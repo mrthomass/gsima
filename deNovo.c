@@ -5,7 +5,7 @@
 int * mapQuest(char *REF, char *READ, int REFLEN, int RLEN);
 char *combineRead(char *readOne, char *readTwo, int loc);
 int *sumFast(FILE *fasta);
-char *alignWith(char *found, char *read);
+char *alignWith(char *found, char *read, int buff);
 
 
 // right now it works well with clean data we can work later for less clean
@@ -19,29 +19,58 @@ int main(int argc, char *argv[])
 		return(1);
 	}
 
+	int myBuff = 9;
+
 	// actual GCAATCATCCCTCCTGCTCTAGCTGAGGGTATGGGTCTAGGGGTCTATCTTCAATATTGAAAACGGGCCGCGCGGCGTCCAGACGTATCTGACAGGAGTT
 
 
 	int *charles = sumFast(readFile);
 
-	// first work with the three reads
+	// sort which reads have been used
+	int doug[charles[0] + 1];
+	for (int i = 0; i < (charles[0] + 1); i++)
+	{
+		doug[i] = 1;
+	}
+
 
 	char *masterbuild = malloc(sizeof(char) * (charles[1] + 1));
 	char *holderman;
 
 	// would need a sub for loop to deal with skipping certain reads that have already been aligned
 	
+	int a;
+	int b;
+
 	fscanf(readFile, "%*[^\n]\n%s\n", masterbuild);
 
 	for (int i = 2; i < charles[0] + 1; i++)
 	{
-		holderman = malloc(sizeof(char) * (charles[i] + 1));	
-		fscanf(readFile, "%*[^\n]\n%s\n", holderman);
-		masterbuild = alignWith(masterbuild, holderman);
+		if (doug[i] > 0)
+		{
+			holderman = malloc(sizeof(char) * (charles[i] + 1));
+			fscanf(readFile, "%*[^\n]\n%s\n", holderman);
+			a = strlen(masterbuild);
+			masterbuild = alignWith(masterbuild, holderman, myBuff);
+			b = strlen(masterbuild);
+			// if it is fit then change i to negative one, not just the doug does the job
+			if (b - a > 0)
+			{
+				doug[i] = -1;
+			}
+		}
 	}
 
 	printf("%s\n", masterbuild);
 	
+
+	printf("\n\n");
+	for (int i = 0; i < (charles[0] + 1); i++)
+	{
+		printf("%i\t%i\n", i, doug[i]);
+	}
+
+
 	fclose(readFile);
 	free(charles);
 	free(holderman);
@@ -159,11 +188,17 @@ char *combineRead(char *readOne, char *readTwo, int loc)
 
 
 // need a function that returns just the read, combines the previous two functions
+// if the alignment index isn't good enough then just return the original found
 
-char *alignWith(char *found, char *read)
+char *alignWith(char *found, char *read, int buff)
 {
 	int *h = mapQuest(found, read, strlen(found), strlen(read));
 	char *opt = combineRead(found, read, h[1]);
+	if (h[0] < buff)
+	{
+		return(found);
+	}
+
 	return(opt);
 }
 
